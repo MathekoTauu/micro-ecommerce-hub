@@ -2990,4 +2990,51 @@
     .cart-page-item-subtotal {
         text-align: left;
     }
+
+    .auth-card {
+        margin: 0 var(--spacing-sm);
+        padding: var(--spacing-lg);
+    }
+
+    .auth-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .form-card {
+        padding: var(--spacing-lg);
+        margin: 0 var(--spacing-sm);
+    }
+
+    .form-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+
+    .stat-info h3 {
+        font-size: 1.5rem;
+    }
+
+    .selector-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .selector-form input[type="email"] {
+        min-width: unset;
+        width: 100%;
+    }
 }
