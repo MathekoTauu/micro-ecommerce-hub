@@ -35,5 +35,15 @@
     "total_sales": 0,
     "joined_date": "2026-02-13T10:50:19.620086",
     "description": ""
+  },
+  {
+    "id": "vendor_005",
+    "user_id": "user_0002",
+    "name": "Matheko",
+    "location": "",
+    "rating": 5.0,
+    "total_sales": 0,
+    "joined_date": "2026-02-13T12:08:54.769328",
+    "description": ""
   }
 ]

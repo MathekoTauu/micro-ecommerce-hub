@@ -50,10 +50,11 @@ document.getElementById('generate-invoice-btn').addEventListener('click', async 
         // Generate QR code
         const qrContainer = document.getElementById('qr-code');
         qrContainer.innerHTML = ''; // Clear previous QR
+        const qrSize = Math.min(256, qrContainer.clientWidth - 32);
         new QRCode(qrContainer, {
             text: data.payment_request,
-            width: 256,
-            height: 256
+            width: qrSize,
+            height: qrSize
         });
         
         // Display invoice text
