@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>➕ Add New Product</h1>
+            <p>List your product on ZapMarket</p>
+        </div>
+
+        <form method="POST" class="product-form">
+            <div class="form-group">
+                <label for="name">Product Name *</label>
+                <input type="text" id="name" name="name" required 
+                       placeholder="Handwoven Basket">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" name="description" required rows="4"
+                          placeholder="Describe your product in detail..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="price_sats">Price (Satoshis) *</label>
+                    <input type="number" id="price_sats" name="price_sats" required 
+                           min="1" placeholder="50000">
+                </div>
+
+                <div class="form-group">
+                    <label for="stock">Stock Quantity *</label>
+                    <input type="number" id="stock" name="stock" required 
+                           min="0" placeholder="10">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="home-decor">Home Decor</option>
+                    <option value="jewelry">Jewelry</option>
+                    <option value="kitchenware">Kitchenware</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="art">Art</option>
+                    <option value="crafts">Crafts</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Image Filename</label>
+                <input type="text" id="image" name="image" 
+                       placeholder="product.jpg" value="placeholder.jpg">
+                <small>Upload images to static/images/products/ folder</small>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('vendor_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Add Product</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

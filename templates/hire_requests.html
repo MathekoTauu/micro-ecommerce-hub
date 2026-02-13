@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}My Hire Requests - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container dashboard-container">
+    <h1>My Hire Requests</h1>
+    <p class="form-subtitle">Track the status of your freelancer hire requests.</p>
+
+    <!-- Email Lookup -->
+    <div class="dashboard-selector">
+        <form method="GET" action="/hire-requests" class="selector-form">
+            <label for="email">Your email:</label>
+            <input type="email" name="email" id="email" value="{{ email }}" 
+                   placeholder="john@example.com" class="filter-select" required>
+            <button type="submit" class="btn btn-primary btn-sm">Look Up</button>
+        </form>
+    </div>
+
+    {% if searched %}
+        {% if hire_requests|length == 0 %}
+        <div class="empty-state">
+            <h2>No requests found</h2>
+            <p>No hire requests found for <strong>{{ email }}</strong>. <a href="/freelancers">Browse freelancers</a> to get started.</p>
+        </div>
+        {% else %}
+        <p class="results-count">{{ hire_requests|length }} request{{ 's' if hire_requests|length != 1 }} found</p>
+        <div class="requests-list">
+            {% for req in hire_requests %}
+            <div class="request-card request-{{ req.status }}">
+                <div class="request-header">
+                    <div>
+                        <h3>{{ req.project_title }}</h3>
+                        <span class="request-client">To: {{ req.freelancer_name }}</span>
+                    </div>
+                    <span class="request-status-badge status-{{ req.status }}">{{ req.status|capitalize }}</span>
+                </div>
+
+                <p class="request-description">{{ req.project_description }}</p>
+
+                <div class="request-details">
+                    {% if req.estimated_hours %}
+                    <span>⏱️ {{ req.estimated_hours }} hours</span>
+                    {% endif %}
+                    {% if req.budget_sats %}
+                    <span>💰 {{ req.budget_sats }} sats</span>
+                    {% endif %}
+                    <span>📅 {{ req.created_at[:10] }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

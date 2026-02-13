@@ -1,0 +1,39 @@
+[
+  {
+    "id": "vendor_001",
+    "name": "Amara Crafts",
+    "location": "Nairobi, Kenya",
+    "rating": 4.8,
+    "total_sales": 127,
+    "joined_date": "2024-03-15",
+    "description": "Family-owned business specializing in traditional Kenyan crafts."
+  },
+  {
+    "id": "vendor_002",
+    "name": "Silva Artesanato",
+    "location": "S\u00c3\u00a3o Paulo, Brazil",
+    "rating": 4.9,
+    "total_sales": 89,
+    "joined_date": "2024-05-20",
+    "description": "Handcrafted jewelry inspired by Brazilian heritage."
+  },
+  {
+    "id": "vendor_003",
+    "name": "Hanoi Ceramics",
+    "location": "Hanoi, Vietnam",
+    "rating": 4.7,
+    "total_sales": 156,
+    "joined_date": "2024-01-10",
+    "description": "Traditional Vietnamese pottery and ceramics."
+  },
+  {
+    "id": "vendor_004",
+    "user_id": "user_0001",
+    "name": "Matheko Masemola",
+    "location": "",
+    "rating": 5.0,
+    "total_sales": 0,
+    "joined_date": "2026-02-13T10:50:19.620086",
+    "description": ""
+  }
+]

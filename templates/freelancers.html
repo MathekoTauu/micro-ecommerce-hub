@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Freelance Services - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="container">
+        <h1>Find Expert Freelancers</h1>
+        <p>Hire talented professionals and pay with Bitcoin Lightning ⚡</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Filters -->
+    <div class="freelancer-filters">
+        <form method="GET" action="/freelancers" class="filter-form">
+            <div class="filter-group">
+                <label for="skill">Filter by Skill:</label>
+                <select name="skill" id="skill" class="filter-select">
+                    <option value="">All Skills</option>
+                    {% for skill in all_skills %}
+                    <option value="{{ skill }}" {% if current_skill == skill %}selected{% endif %}>{{ skill }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-checkbox">
+                    <input type="checkbox" name="available" value="true"
+                           {% if available_only == 'true' %}checked{% endif %}>
+                    Available now
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Apply Filters</button>
+            <a href="/freelancers" class="btn btn-secondary btn-sm">Clear</a>
+        </form>
+    </div>
+
+    <!-- Results count -->
+    <p class="results-count">{{ freelancers|length }} freelancer{{ 's' if freelancers|length != 1 }} found</p>
+
+    <!-- Freelancer Grid -->
+    <div class="freelancer-grid">
+        {% for freelancer in freelancers %}
+        <div class="freelancer-card {% if not freelancer.available %}unavailable{% endif %}">
+            <div class="freelancer-card-header">
+                <div class="freelancer-avatar">{{ freelancer.avatar }}</div>
+                <div class="freelancer-status">
+                    {% if freelancer.available %}
+                        <span class="status-badge available">Available</span>
+                    {% else %}
+                        <span class="status-badge busy">Unavailable</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="freelancer-card-body">
+                <h3 class="freelancer-name">{{ freelancer.name }}</h3>
+                <p class="freelancer-title">{{ freelancer.title }}</p>
+                <p class="freelancer-description">{{ freelancer.description }}</p>
+                
+                <div class="freelancer-skills">
+                    {% for skill in freelancer.skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="freelancer-meta">
+                    <span class="freelancer-location">📍 {{ freelancer.location }}</span>
+                    <span class="freelancer-rating">⭐ {{ freelancer.rating }}</span>
+                    <span class="freelancer-jobs">✅ {{ freelancer.completed_jobs }} jobs</span>
+                </div>
+
+                <div class="freelancer-rate">
+                    <strong>{{ freelancer.rate_sats }} sats</strong> / {{ freelancer.rate_unit }}
+                </div>
+            </div>
+            <div class="freelancer-card-footer">
+                <a href="/freelancer/{{ freelancer.id }}" class="btn btn-primary">View Profile</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if freelancers|length == 0 %}
+    <div class="empty-state">
+        <h2>No freelancers found</h2>
+        <p>Try adjusting your filters or <a href="/freelancers">view all freelancers</a>.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

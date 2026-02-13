@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="container">
+        <h1>Discover Artisan Goods from Around the World</h1>
+        <p>Buy and sell using Bitcoin Lightning Network ⚡</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                 alt="{{ product.name }}">
+            <div class="product-info">
+                <h3>{{ product.name }}</h3>
+                <p class="product-description">{{ product.description }}</p>
+                <div class="product-meta">
+                    <span class="price">{{ product.price_sats }} sats</span>
+                    <span class="location">📍 {{ product.location }}</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/product/{{ product.id }}" class="btn btn-primary">View Details</a>
+                    <button class="btn btn-secondary add-to-cart-quick"
+                            data-id="{{ product.id }}"
+                            data-name="{{ product.name }}"
+                            data-price="{{ product.price_sats }}"
+                            data-image="{{ product.image }}">
+                        🛒 Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.add-to-cart-quick').forEach(btn => {
+    btn.addEventListener('click', () => {
+        Cart.addItem({
+            id: btn.dataset.id,
+            name: btn.dataset.name,
+            price_sats: parseInt(btn.dataset.price),
+            image: btn.dataset.image,
+            quantity: 1
+        });
+    });
+});
+</script>
+{% endblock %}

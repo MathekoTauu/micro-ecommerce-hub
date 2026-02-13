@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+      - LND_HOST=polar-lnd-1
+      - LND_PORT=10009
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

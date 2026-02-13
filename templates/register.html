@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Register - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>⚡ Join ZapMarket</h1>
+            <p>Create your account and start selling globally</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required 
+                       placeholder="John Doe" autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required 
+                       placeholder="you@example.com" autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Create a strong password" autocomplete="new-password"
+                       minlength="6">
+                <small>Minimum 6 characters</small>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Account Type</label>
+                <select id="role" name="role" required>
+                    <option value="vendor">Vendor (I want to sell products)</option>
+                    <option value="buyer">Buyer (I want to purchase products)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-large">
+                Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

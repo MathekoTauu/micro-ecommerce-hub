@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Product - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>✏️ Edit Product</h1>
+            <p>Update your product details</p>
+        </div>
+
+        <form method="POST" class="product-form">
+            <div class="form-group">
+                <label for="name">Product Name *</label>
+                <input type="text" id="name" name="name" required 
+                       value="{{ product.name }}">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" name="description" required rows="4">{{ product.description }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="price_sats">Price (Satoshis) *</label>
+                    <input type="number" id="price_sats" name="price_sats" required 
+                           min="1" value="{{ product.price_sats }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="stock">Stock Quantity *</label>
+                    <input type="number" id="stock" name="stock" required 
+                           min="0" value="{{ product.stock }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" name="category" required>
+                    <option value="home-decor" {% if product.category == 'home-decor' %}selected{% endif %}>Home Decor</option>
+                    <option value="jewelry" {% if product.category == 'jewelry' %}selected{% endif %}>Jewelry</option>
+                    <option value="kitchenware" {% if product.category == 'kitchenware' %}selected{% endif %}>Kitchenware</option>
+                    <option value="clothing" {% if product.category == 'clothing' %}selected{% endif %}>Clothing</option>
+                    <option value="art" {% if product.category == 'art' %}selected{% endif %}>Art</option>
+                    <option value="crafts" {% if product.category == 'crafts' %}selected{% endif %}>Crafts</option>
+                    <option value="other" {% if product.category == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('vendor_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

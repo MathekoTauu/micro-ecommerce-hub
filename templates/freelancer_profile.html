@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}{{ freelancer.name }} - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container freelancer-profile-container">
+    <a href="/freelancers" class="back-link">← Back to Freelancers</a>
+
+    <div class="profile-grid">
+        <!-- Left Column: Main Info -->
+        <div class="profile-main">
+            <div class="profile-header-card">
+                <div class="profile-avatar-large">{{ freelancer.avatar }}</div>
+                <div class="profile-header-info">
+                    <h1>{{ freelancer.name }}</h1>
+                    <p class="profile-title">{{ freelancer.title }}</p>
+                    <div class="profile-location">📍 {{ freelancer.location }}</div>
+                    <div class="profile-status-inline">
+                        {% if freelancer.available %}
+                            <span class="status-badge available">Available for hire</span>
+                        {% else %}
+                            <span class="status-badge busy">Currently unavailable</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h2>About</h2>
+                <p>{{ freelancer.description }}</p>
+            </div>
+
+            <div class="profile-section">
+                <h2>Skills</h2>
+                <div class="freelancer-skills">
+                    {% for skill in freelancer.skills %}
+                    <span class="skill-tag skill-tag-lg">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Hire Request Form -->
+            {% if freelancer.available %}
+            <div class="profile-section hire-form-section" id="hire-form">
+                <h2>⚡ Send a Hire Request</h2>
+                <p class="form-subtitle">Fill out the details below and {{ freelancer.name.split(' ')[0] }} will review your project.</p>
+                
+                <form method="POST" action="/freelancer/{{ freelancer.id }}/hire" class="hire-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="client_name">Your Name *</label>
+                            <input type="text" id="client_name" name="client_name" required 
+                                   placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="client_email">Your Email *</label>
+                            <input type="email" id="client_email" name="client_email" required 
+                                   placeholder="john@example.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project_title">Project Title *</label>
+                        <input type="text" id="project_title" name="project_title" required 
+                               placeholder="e.g. Build a Landing Page">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project_description">Project Description *</label>
+                        <textarea id="project_description" name="project_description" rows="5" required
+                                  placeholder="Describe your project, goals, and any specific requirements..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estimated_hours">Estimated Hours</label>
+                            <input type="number" id="estimated_hours" name="estimated_hours" min="1" 
+                                   placeholder="e.g. 10">
+                        </div>
+                        <div class="form-group">
+                            <label for="budget_sats">Budget (sats)</label>
+                            <input type="number" id="budget_sats" name="budget_sats" min="1000" 
+                                   placeholder="e.g. 250000">
+                        </div>
+                    </div>
+
+                    <div class="form-info">
+                        <p>💡 {{ freelancer.name.split(' ')[0] }}'s rate: <strong>{{ freelancer.rate_sats }} sats / {{ freelancer.rate_unit }}</strong></p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large btn-full">
+                        ⚡ Send Hire Request
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column: Sidebar -->
+        <div class="profile-sidebar">
+            <div class="sidebar-card">
+                <h3>Hire {{ freelancer.name.split(' ')[0] }}</h3>
+
+                <div class="sidebar-rate">
+                    <span class="rate-amount">{{ freelancer.rate_sats }} sats</span>
+                    <span class="rate-unit">/ {{ freelancer.rate_unit }}</span>
+                </div>
+
+                <div class="sidebar-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">⭐ {{ freelancer.rating }}</span>
+                        <span class="stat-label">Rating</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ freelancer.completed_jobs }}</span>
+                        <span class="stat-label">Jobs Done</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ freelancer.joined_date[:4] }}</span>
+                        <span class="stat-label">Member Since</span>
+                    </div>
+                </div>
+
+                {% if freelancer.available %}
+                <a href="#hire-form" class="btn btn-primary btn-large btn-full">
+                    ⚡ Contact & Hire
+                </a>
+                {% else %}
+                <button class="btn btn-secondary btn-large btn-full" disabled>
+                    Currently Unavailable
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="sidebar-card trust-card">
+                <h4>Why hire on ZapMarket?</h4>
+                <ul class="trust-list">
+                    <li>⚡ Instant payments via Lightning</li>
+                    <li>🔒 Escrow protection</li>
+                    <li>🌍 Global talent pool</li>
+                    <li>💰 Low fees, no chargebacks</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

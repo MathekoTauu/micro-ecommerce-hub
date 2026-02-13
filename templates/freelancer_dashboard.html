@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Freelancer Dashboard - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container dashboard-container">
+    <h1>Freelancer Dashboard</h1>
+
+    <!-- Freelancer Selector -->
+    <div class="dashboard-selector">
+        <form method="GET" action="/freelancer-dashboard" class="selector-form">
+            <label for="freelancer_id">Select your profile:</label>
+            <select name="freelancer_id" id="freelancer_id" class="filter-select" onchange="this.form.submit()">
+                <option value="">-- Choose Freelancer --</option>
+                {% for f in freelancers %}
+                <option value="{{ f.id }}" {% if selected_freelancer and selected_freelancer.id == f.id %}selected{% endif %}>
+                    {{ f.avatar }} {{ f.name }} - {{ f.title }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    {% if selected_freelancer %}
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="dashboard-avatar">{{ selected_freelancer.avatar }}</div>
+        <div>
+            <h2>{{ selected_freelancer.name }}</h2>
+            <p class="profile-title">{{ selected_freelancer.title }}</p>
+        </div>
+        <div class="dashboard-header-stats">
+            <span class="status-badge {% if selected_freelancer.available %}available{% else %}busy{% endif %}">
+                {% if selected_freelancer.available %}Available{% else %}Unavailable{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="dashboard-stats-row">
+        <div class="dashboard-stat-card">
+            <span class="dashboard-stat-number">{{ hire_requests|length }}</span>
+            <span class="dashboard-stat-label">Total Requests</span>
+        </div>
+        <div class="dashboard-stat-card">
+            <span class="dashboard-stat-number pending-color">{{ hire_requests|selectattr('status', 'equalto', 'pending')|list|length }}</span>
+            <span class="dashboard-stat-label">Pending</span>
+        </div>
+        <div class="dashboard-stat-card">
+            <span class="dashboard-stat-number accepted-color">{{ hire_requests|selectattr('status', 'equalto', 'accepted')|list|length }}</span>
+            <span class="dashboard-stat-label">Accepted</span>
+        </div>
+        <div class="dashboard-stat-card">
+            <span class="dashboard-stat-number completed-color">{{ hire_requests|selectattr('status', 'equalto', 'completed')|list|length }}</span>
+            <span class="dashboard-stat-label">Completed</span>
+        </div>
+    </div>
+
+    <!-- Hire Requests Table -->
+    <div class="profile-section">
+        <h2>Incoming Hire Requests</h2>
+
+        {% if hire_requests|length == 0 %}
+        <div class="empty-state">
+            <p>No hire requests yet. Share your profile to start getting clients!</p>
+            <a href="/freelancer/{{ selected_freelancer.id }}" class="btn btn-secondary">View My Profile</a>
+        </div>
+        {% else %}
+        <div class="requests-list">
+            {% for req in hire_requests %}
+            <div class="request-card request-{{ req.status }}">
+                <div class="request-header">
+                    <div>
+                        <h3>{{ req.project_title }}</h3>
+                        <span class="request-client">From: {{ req.client_name }} ({{ req.client_email }})</span>
+                    </div>
+                    <span class="request-status-badge status-{{ req.status }}">{{ req.status|capitalize }}</span>
+                </div>
+
+                <p class="request-description">{{ req.project_description }}</p>
+
+                <div class="request-details">
+                    {% if req.estimated_hours %}
+                    <span>⏱️ {{ req.estimated_hours }} hours</span>
+                    {% endif %}
+                    {% if req.budget_sats %}
+                    <span>💰 {{ req.budget_sats }} sats</span>
+                    {% endif %}
+                    <span>📅 {{ req.created_at[:10] }}</span>
+                </div>
+
+                {% if req.status == 'pending' %}
+                <div class="request-actions">
+                    <form method="POST" action="/hire-request/{{ req.id }}/update" style="display:inline;">
+                        <input type="hidden" name="status" value="accepted">
+                        <button type="submit" class="btn btn-primary btn-sm">✓ Accept</button>
+                    </form>
+                    <form method="POST" action="/hire-request/{{ req.id }}/update" style="display:inline;">
+                        <input type="hidden" name="status" value="declined">
+                        <button type="submit" class="btn btn-danger btn-sm">✗ Decline</button>
+                    </form>
+                </div>
+                {% elif req.status == 'accepted' %}
+                <div class="request-actions">
+                    <form method="POST" action="/hire-request/{{ req.id }}/update" style="display:inline;">
+                        <input type="hidden" name="status" value="completed">
+                        <button type="submit" class="btn btn-primary btn-sm">✓ Mark Completed</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

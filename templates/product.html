@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container product-detail-container">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span class="separator">›</span>
+        <a href="{{ url_for('index') }}">{{ product.category|replace('-', ' ')|title }}</a>
+        <span class="separator">›</span>
+        <span class="current">{{ product.name }}</span>
+    </nav>
+
+    <!-- Main Product Section -->
+    <div class="product-main-grid">
+        <!-- Image Gallery -->
+        <div class="product-gallery-section">
+            <div class="main-image-container">
+                <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                     alt="{{ product.name }}" 
+                     class="product-main-image"
+                     id="mainImage">
+                <div class="image-badge">
+                    {% if product.stock > 0 %}
+                    <span class="badge-in-stock">In Stock</span>
+                    {% else %}
+                    <span class="badge-out-stock">Out of Stock</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="image-thumbnails">
+                {% for i in range(3) %}
+                <div class="thumbnail {% if i == 0 %}active{% endif %}" 
+                     data-image="{{ url_for('static', filename='images/products/' + product.image) }}">
+                    <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                         alt="View {{ i + 1 }}">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Product Information -->
+        <div class="product-info-section">
+            <!-- Header -->
+            <div class="product-header">
+                <div class="product-category-tag">
+                    <span class="category-icon">
+                        {% if product.category == 'jewelry' %}💎
+                        {% elif product.category == 'home-decor' %}🏠
+                        {% elif product.category == 'kitchenware' %}🍽️
+                        {% elif product.category == 'clothing' %}👕
+                        {% elif product.category == 'art' %}🎨
+                        {% else %}✨{% endif %}
+                    </span>
+                    <span>{{ product.category|replace('-', ' ')|title }}</span>
+                </div>
+                
+                <h1 class="product-title">{{ product.name }}</h1>
+                
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">⭐</span>
+                        <span class="meta-text">{{ vendor.rating if vendor else 5.0 }} Rating</span>
+                    </div>
+                    <div class="meta-separator">•</div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📦</span>
+                        <span class="meta-text">{{ vendor.total_sales if vendor else 0 }} Sold</span>
+                    </div>
+                    <div class="meta-separator">•</div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📍</span>
+                        <span class="meta-text">{{ product.location }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price -->
+            <div class="price-card">
+                <div class="price-header">
+                    <span class="price-label">Price</span>
+                    <div class="price-actions">
+                        <button class="icon-btn" title="Save to wishlist" aria-label="Add to wishlist">
+                            <span>❤️</span>
+                        </button>
+                        <button class="icon-btn" title="Share product" aria-label="Share">
+                            <span>📤</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="price-main">
+                    <div class="price-sats">
+                        <span class="lightning-icon">⚡</span>
+                        <span class="price-amount">{{ "{:,}".format(product.price_sats) }}</span>
+                        <span class="price-unit">sats</span>
+                    </div>
+                    <div class="price-usd">≈ ${{ "%.2f"|format(product.price_sats * 0.0004) }} USD</div>
+                </div>
+
+                <div class="stock-status">
+                    <div class="stock-indicator {% if product.stock <= 0 %}out-of-stock{% endif %}"></div>
+                    <span class="stock-text">
+                        {% if product.stock > 10 %}
+                            In Stock ({{ product.stock }} available)
+                        {% elif product.stock > 0 %}
+                            Only {{ product.stock }} left in stock
+                        {% else %}
+                            Out of stock
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Purchase -->
+            <div class="purchase-card">
+                <div class="quantity-section">
+                    <label class="quantity-label">Quantity</label>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" id="decreaseQty" 
+                                {% if product.stock <= 0 %}disabled{% endif %}
+                                aria-label="Decrease quantity">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                        <input type="number" 
+                               class="qty-input" 
+                               id="quantityInput" 
+                               value="1" 
+                               min="1" 
+                               max="{{ product.stock if product.stock > 0 else 1 }}"
+                               {% if product.stock <= 0 %}disabled{% endif %}
+                               aria-label="Quantity">
+                        <button class="qty-btn" id="increaseQty" 
+                                {% if product.stock <= 0 %}disabled{% endif %}
+                                aria-label="Increase quantity">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="quantity-info">
+                        <span id="totalPrice">{{ "{:,}".format(product.price_sats) }} sats</span>
+                    </div>
+                </div>
+
+                <div class="purchase-actions">
+                    {% if product.stock > 0 %}
+                    <a href="{{ url_for('checkout', product_id=product.id) }}" 
+                       class="btn btn-primary btn-large btn-checkout"
+                       id="checkoutBtn">
+                        <span class="btn-icon">⚡</span>
+                        <span class="btn-text">Buy with Lightning</span>
+                    </a>
+                    <button class="btn btn-secondary btn-large" id="addToCartBtn"
+                            data-id="{{ product.id }}"
+                            data-name="{{ product.name }}"
+                            data-price="{{ product.price_sats }}"
+                            data-image="{{ product.image }}">
+                        <span class="btn-icon">🛒</span>
+                        <span class="btn-text">Add to Cart</span>
+                    </button>
+                    {% else %}
+                    <button class="btn btn-secondary btn-large" disabled>
+                        <span class="btn-icon">✉️</span>
+                        <span class="btn-text">Notify When Available</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Trust Signals -->
+            <div class="trust-signals">
+                {% set trust_items = [
+                    ('🔒', 'Secure Payment', 'Lightning Network escrow protection'),
+                    ('🚚', 'Fast Shipping', 'Ships within 2-3 business days'),
+                    ('↩️', 'Easy Returns', '30-day return policy')
+                ] %}
+                {% for icon, title, desc in trust_items %}
+                <div class="trust-item">
+                    <span class="trust-icon">{{ icon }}</span>
+                    <div class="trust-content">
+                        <strong>{{ title }}</strong>
+                        <p>{{ desc }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="product-tabs-section">
+        <div class="tabs-nav">
+            {% set tabs = [
+                ('description', '📝', 'Description'),
+                ('specifications', '📋', 'Specifications'),
+                ('shipping', '📦', 'Shipping'),
+                ('reviews', '⭐', 'Reviews')
+            ] %}
+            {% for tab_id, icon, label in tabs %}
+            <button class="tab-btn {% if loop.first %}active{% endif %}" data-tab="{{ tab_id }}">
+                <span class="tab-icon">{{ icon }}</span>
+                <span>{{ label }}</span>
+            </button>
+            {% endfor %}
+        </div>
+
+        <div class="tabs-content">
+            <!-- Description Tab -->
+            <div class="tab-panel active" id="description">
+                <div class="description-content">
+                    <h3>About this product</h3>
+                    <p>{{ product.description }}</p>
+                    
+                    <h4>Key Features</h4>
+                    <ul class="features-list">
+                        <li>✓ Handcrafted by skilled artisans</li>
+                        <li>✓ Made from sustainable materials</li>
+                        <li>✓ Unique design - no two pieces are exactly alike</li>
+                        <li>✓ Fair trade certified</li>
+                        <li>✓ Ships from {{ product.location }}</li>
+                    </ul>
+
+                    <div class="description-highlight">
+                        <h4>Why choose this product?</h4>
+                        <p>When you purchase this item, you're supporting local artisans and their communities. Each piece tells a story of traditional craftsmanship passed down through generations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specifications Tab -->
+            <div class="tab-panel" id="specifications">
+                <div class="specifications-grid">
+                    {% set specs = [
+                        ('Product ID', product.id),
+                        ('Category', product.category|replace('-', ' ')|title),
+                        ('Origin', product.location),
+                        ('Available Quantity', product.stock ~ ' units'),
+                        ('Payment Methods', 'Lightning Network (Bitcoin)')
+                    ] %}
+                    {% for label, value in specs %}
+                    <div class="spec-row">
+                        <span class="spec-label">{{ label }}</span>
+                        <span class="spec-value">{{ value }}</span>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="spec-row">
+                        <span class="spec-label">Stock Status</span>
+                        <span class="spec-value">
+                            {% if product.stock > 0 %}
+                            <span style="color: var(--success-green);">✓ In Stock</span>
+                            {% else %}
+                            <span style="color: var(--error-red);">✗ Out of Stock</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if product.created_at %}
+                    <div class="spec-row">
+                        <span class="spec-label">Date Listed</span>
+                        <span class="spec-value">{{ product.created_at[:10] }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Shipping Tab -->
+            <div class="tab-panel" id="shipping">
+                <div class="shipping-content">
+                    <h3>Shipping Information</h3>
+                    
+                    {% set shipping_options = [
+                        ('🌍 International Shipping', '10-15 business days', 'Ships from ' ~ product.location ~ '. Tracking number provided.'),
+                        ('📦 Packaging', '', 'Items are carefully packaged to ensure safe delivery. We use eco-friendly materials whenever possible.'),
+                        ('💰 Shipping Costs', '', 'Shipping costs are calculated at checkout based on your location. Free shipping on orders over 500,000 sats.')
+                    ] %}
+                    
+                    {% for title, time, desc in shipping_options %}
+                    <div class="shipping-option">
+                        <div class="shipping-header">
+                            <strong>{{ title }}</strong>
+                            {% if time %}<span class="shipping-time">{{ time }}</span>{% endif %}
+                        </div>
+                        <p>{{ desc }}</p>
+                    </div>
+                    {% endfor %}
+
+                    <div class="shipping-note">
+                        <strong>Note:</strong> Import duties and taxes may apply depending on your country. These are not included in the product price.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Tab -->
+            <div class="tab-panel" id="reviews">
+                <div class="reviews-section">
+                    <div class="reviews-summary">
+                        <div class="rating-overview">
+                            <div class="rating-score">
+                                <span class="score-number">{{ vendor.rating if vendor else 5.0 }}</span>
+                                <div class="score-stars">⭐⭐⭐⭐⭐</div>
+                                <span class="score-count">Based on {{ vendor.total_sales if vendor else 0 }} reviews</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reviews-list">
+                        {% set reviews = [
+                            ('JD', 'John Doe', '⭐⭐⭐⭐⭐', '2 weeks ago', 'Excellent quality!', 'Amazing craftsmanship. The Lightning payment was instant and seamless. Highly recommend this product and vendor!', 12),
+                            ('AS', 'Alice Smith', '⭐⭐⭐⭐⭐', '1 month ago', 'Beautiful item', 'Exactly as described. Fast shipping and great customer service. Love supporting artisans through this platform!', 8),
+                            ('MB', 'Maria Brown', '⭐⭐⭐⭐', '2 months ago', 'Great purchase', 'Very happy with this purchase. The only reason I didn\'t give 5 stars is the shipping took a bit longer than expected, but the quality makes up for it.', 5)
+                        ] %}
+                        
+                        {% for avatar, name, stars, date, title, text, helpful in reviews %}
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">{{ avatar }}</div>
+                                    <div>
+                                        <strong class="reviewer-name">{{ name }}</strong>
+                                        <div class="review-stars">{{ stars }}</div>
+                                    </div>
+                                </div>
+                                <span class="review-date">{{ date }}</span>
+                            </div>
+                            <div class="review-content">
+                                <h4 class="review-title">{{ title }}</h4>
+                                <p class="review-text">{{ text }}</p>
+                            </div>
+                            <div class="review-footer">
+                                <button class="review-action">👍 Helpful ({{ helpful }})</button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-secondary load-more-reviews">Load More Reviews</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor Card -->
+    {% if vendor %}
+    <div class="vendor-card-section">
+        <div class="vendor-card">
+            <div class="vendor-header">
+                <div class="vendor-avatar-large">{{ vendor.name[0].upper() }}</div>
+                <div class="vendor-info">
+                    <h3 class="vendor-name">{{ vendor.name }}</h3>
+                    <div class="vendor-meta">
+                        {% set vendor_meta = [
+                            ('⭐', vendor.rating ~ ' rating'),
+                            ('📦', vendor.total_sales ~ ' sales'),
+                            ('📍', vendor.location)
+                        ] %}
+                        {% for icon, text in vendor_meta %}
+                        <span class="vendor-meta-item">
+                            <span class="meta-icon">{{ icon }}</span>
+                            <span>{{ text }}</span>
+                        </span>
+                        {% if not loop.last %}<span class="meta-separator">•</span>{% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {% if vendor.description %}
+            <div class="vendor-description">
+                <p>{{ vendor.description }}</p>
+            </div>
+            {% endif %}
+
+            <div class="vendor-stats-grid">
+                {% set stats = [
+                    (vendor.total_sales, 'Total Sales'),
+                    (vendor.rating, 'Rating'),
+                    ('98%', 'Positive')
+                ] %}
+                {% for value, label in stats %}
+                <div class="vendor-stat">
+                    <span class="stat-value">{{ value }}</span>
+                    <span class="stat-label">{{ label }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="vendor-actions">
+                <button class="btn btn-primary">Visit Store</button>
+                <button class="btn btn-secondary">Contact Vendor</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Similar Products -->
+    <div class="similar-products-section">
+        <h2 class="section-title">Similar Products</h2>
+        <p class="section-subtitle">More items from the {{ product.category|replace('-', ' ')|title }} category</p>
+        
+        <div class="similar-products-grid">
+            <div class="similar-product-card">
+                <div class="similar-product-image">
+                    <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                         alt="Similar product">
+                </div>
+                <div class="similar-product-info">
+                    <h4>Similar Handcrafted Item</h4>
+                    <div class="similar-product-price">⚡ 45,000 sats</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/product-detail.js') }}"></script>
+<script>
+    // Initialize product detail page
+    const productDetail = new ProductDetail({
+        pricePerUnit: {{ product.price_sats }},
+        maxStock: {{ product.stock if product.stock > 0 else 1 }}
+    });
+</script>
+{% endblock %}

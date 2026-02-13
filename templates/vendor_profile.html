@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Vendor Profile - ZapMarket{% endblock %}
+
+{% block content %}
+<div class="container form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>👤 Vendor Profile</h1>
+            <p>Update your public vendor information</p>
+        </div>
+
+        <form method="POST" class="product-form">
+            <div class="form-group">
+                <label for="name">Business Name *</label>
+                <input type="text" id="name" name="name" required 
+                       value="{{ vendor.name }}">
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location *</label>
+                <input type="text" id="location" name="location" required 
+                       placeholder="City, Country" value="{{ vendor.location }}">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4"
+                          placeholder="Tell customers about your business...">{{ vendor.description }}</textarea>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <strong>Member Since:</strong>
+                    <span>{{ vendor.joined_date[:10] }}</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Total Sales:</strong>
+                    <span>{{ vendor.total_sales }}</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Rating:</strong>
+                    <span>⭐ {{ vendor.rating }}</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('vendor_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

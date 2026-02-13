@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container checkout-container">
+    <h1>Complete Your Purchase</h1>
+    
+    <div class="checkout-grid">
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div class="product-preview">
+                <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                     alt="{{ product.name }}">
+                <div>
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.price_sats }} sats</p>
+                </div>
+            </div>
+            
+            <div class="quantity-selector">
+                <label>Quantity:</label>
+                <input type="number" id="quantity" value="1" min="1" max="10">
+            </div>
+            
+            <div class="total">
+                <strong>Total: <span id="total-sats">{{ product.price_sats }}</span> sats</strong>
+            </div>
+            
+            <button id="generate-invoice-btn" class="btn btn-primary btn-large">
+                Generate Lightning Invoice
+            </button>
+        </div>
+        
+        <div class="payment-panel" id="payment-panel" style="display: none;">
+            <h2>Pay with Lightning ⚡</h2>
+            
+            <div id="qr-code"></div>
+            
+            <div class="invoice-details">
+                <label>Lightning Invoice:</label>
+                <textarea id="invoice-text" readonly></textarea>
+                <button id="copy-invoice-btn" class="btn btn-secondary">Copy Invoice</button>
+            </div>
+            
+            <div id="payment-status">
+                <div class="spinner"></div>
+                <p>Waiting for payment...</p>
+            </div>
+            
+            <div id="payment-success" style="display: none;">
+                <div class="success-icon">✓</div>
+                <h3>Payment Successful!</h3>
+                <p>Your order has been confirmed.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pass data safely to JavaScript with proper type conversion
+    const productId = "{{ product.id }}";
+    const basePrice = parseInt("{{ product.price_sats | default(0) }}") || 0;
+</script>
+<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+{% endblock %}

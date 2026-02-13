@@ -1,0 +1,35 @@
+[
+  {
+    "id": "prod_001",
+    "name": "Handwoven Basket",
+    "description": "Traditional handwoven basket from rural Kenya. Perfect for storage or decoration.",
+    "price_sats": 50000,
+    "vendor_id": "vendor_001",
+    "location": "Nairobi, Kenya",
+    "image": "Handwoven_Waterweed_Basket.jpg",
+    "category": "home-decor",
+    "stock": 5
+  },
+  {
+    "id": "prod_002",
+    "name": "Silver Bracelet",
+    "description": "Artisan-crafted silver bracelet with traditional Brazilian patterns.",
+    "price_sats": 120000,
+    "vendor_id": "vendor_002",
+    "location": "São Paulo, Brazil",
+    "image": "Men_s_Sterling_Silver_Rectangle_Link_Chain_Bracelet.jpg",
+    "category": "jewelry",
+    "stock": 3
+  },
+  {
+    "id": "prod_003",
+    "name": "Ceramic Mug Set",
+    "description": "Set of 4 handmade ceramic mugs with unique glazing.",
+    "price_sats": 75000,
+    "vendor_id": "vendor_003",
+    "location": "Hanoi, Vietnam",
+    "image": "Coffee___Tea_Cups.jpg",
+    "category": "kitchenware",
+    "stock": 8
+  }
+]
